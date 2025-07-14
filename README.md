@@ -1,4 +1,4 @@
-# Figma to Roadmap Generator
+# Figma to Tasks list for the developers
 
 This project provides a streamlined workflow to analyze a Figma design and generate a comprehensive development roadmap using a multimodal AI model. It uses two main scripts:
 
