@@ -107,7 +107,12 @@ def main():
         print("Please run the `figma_screenshot.py` script first to download the images.")
         return
 
-    image_files = [f for f in os.listdir(SCREENSHOTS_DIR) if f.endswith(('.png', '.jpg', '.jpeg'))]
+    image_files = []
+    for root, dirs, files in os.walk(SCREENSHOTS_DIR):
+        for file in files:
+            if file.lower().endswith(('.png', '.jpg', '.jpeg')):
+                image_files.append(os.path.join(root, file))
+
     if not image_files:
         print(f"No images found in the '{SCREENSHOTS_DIR}' directory.")
         return
@@ -117,8 +122,7 @@ def main():
     # Step 1: Analyze each image
     all_analyses = []
     for image_file in image_files:
-        image_path = os.path.join(SCREENSHOTS_DIR, image_file)
-        analysis = analyze_image_with_gpt4(image_path, client)
+        analysis = analyze_image_with_gpt4(image_file, client)
         all_analyses.append(analysis)
 
     # Step 2: Generate the roadmap

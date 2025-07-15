@@ -12,8 +12,6 @@ OUTPUT_DIR = "figma_screenshots"
 
 def get_figma_file_key(url):
     """Extracts the file key from a Figma URL."""
-    # https://www.figma.com/file/FILE_KEY/project-name
-    # or https://www.figma.com/design/FILE_KEY/project-name
     parts = url.split("/")
     if "file" in parts:
         return parts[parts.index("file") + 1]
@@ -77,6 +75,7 @@ def main():
                 print(f"    - Capturing node: {node_name} ({node_id})")
                 try:
                     image = get_node_image(file_key, node_id, FIGMA_API_TOKEN)
+                    os.makedirs(os.path.dirname(output_path), exist_ok=True)
                     image.save(output_path)
                     print(f"      - Saved to: {output_path}")
                 except requests.exceptions.RequestException as e:
