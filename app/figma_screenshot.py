@@ -3,6 +3,7 @@ import requests
 import json
 from PIL import Image
 from io import BytesIO
+import re
 
 # --- Configuration ---
 FIGMA_API_TOKEN = os.environ.get("FIGMA_API_TOKEN")
@@ -40,6 +41,13 @@ def get_node_image(file_key, node_id, api_token):
     image_response.raise_for_status()
     return Image.open(BytesIO(image_response.content))
 
+def sanitize_filename(name):
+    # Remove or replace invalid filename characters for Windows
+    name = re.sub(r'[<>:"/\\|?*\n\r\t]', '_', name)
+    # Optionally, remove emojis and trim length
+    name = re.sub(r'[^\w\s\-_\.]', '', name)
+    return name[:150]  # Limit length if needed
+
 def main():
     """Main function to run the screenshot process."""
     if not FIGMA_API_TOKEN:
@@ -69,7 +77,7 @@ def main():
             print(f"  - Processing page: {page['name']}")
             for node in page["children"]:
                 node_id = node["id"]
-                node_name = node["name"].replace("/", "_").replace("\\", "_")
+                node_name = sanitize_filename(node["name"])
                 output_path = os.path.join(OUTPUT_DIR, f"{page['name']}_{node_name}.png")
 
                 print(f"    - Capturing node: {node_name} ({node_id})")
